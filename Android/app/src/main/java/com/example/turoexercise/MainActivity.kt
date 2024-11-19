@@ -1,47 +1,53 @@
 package com.example.turoexercise
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.turoexercise.model.response.Business
+import com.example.turoexercise.ui.screen.BusinessListScreen
 import com.example.turoexercise.ui.theme.TuroExerciseTheme
+import com.example.turoexercise.viewmodel.BusinessListViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContent {
             TuroExerciseTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                val viewModel: BusinessListViewModel = viewModel()
+                val businessListing = remember { mutableStateListOf<Business>() }
+
+                viewModel.toastLoading = {
+                    Toast.makeText(this, getText(R.string.toast_loading), Toast.LENGTH_SHORT).show()
                 }
+
+                viewModel.toastMessageEmpty = {
+                    Toast.makeText(this, getText(R.string.toast_search_empty), Toast.LENGTH_SHORT).show()
+                }
+
+                viewModel.toastConnectionIssue = {
+                    Toast.makeText(this, getText(R.string.toast_no_connection), Toast.LENGTH_SHORT).show()
+                }
+
+                BusinessListScreen(
+                    context = this,
+                    businessListViewModel = viewModel,
+                    businessList = businessListing,
+                    clearList = {
+                        businessListing.clear()
+                    },
+                    startSearch = {
+                        if (viewModel.searchTerm.isNotEmpty() && viewModel.locationTerm.isNotEmpty()) {
+                            viewModel.launchBusinessSearch(this, businessListing)
+                        } else {
+                            Toast.makeText(this, getText(R.string.toast_term_empty), Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                )
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    TuroExerciseTheme {
-        Greeting("Android")
     }
 }

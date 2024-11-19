@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">Turo Exercise</string>
+
+    <string name="toast_loading">Loading… Please wait.</string>
+    <string name="toast_search_empty">No results were found. Please try again.</string>
+    <string name="toast_no_connection">No connection found. Please try again</string>
+    <string name="toast_term_empty">Make sure both search and location fields are not empty.</string>
+
+    <string name="clear">Clear</string>
+    <string name="search">Search</string>
+
+    <string name="placeholder_search">Search for food</string>
+    <string name="placeholder_location">Search for location</string>
 </resources>
